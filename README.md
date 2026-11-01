@@ -96,7 +96,6 @@ Neue Einträge entstehen von selbst: Bei jedem Push auf `main` feuert `.github/w
 
 LOKRO wächst durch Menschen, die mitgestalten wollen – alles ehrenamtlich:
 
-- 💬 [Discord beitreten](https://discord.lokro.dev)
 - 💻 [Auf GitHub](https://github.com/Lokrogaming) – Issues und PRs willkommen
 - 📝 [Bewerben](https://lokro.dev/de/join.html) – offene Positionen im Portal
 

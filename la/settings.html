@@ -147,9 +147,7 @@
 </div>
 <div class="grid sm:grid-cols-2 gap-6">
 <div class="card chamfer p-7 reveal">
-<label class="switch" id="egg-row"><input id="set-egg" type="checkbox"><span class="track"></span><span class="font-display font-semibold">Ovum paschale cursoris</span></label>
-<p class="text-sm muted mt-4 leading-relaxed">Punctum viride cum cauda (solum computatro, solum themate originali). Per defaltam: extinctum.</p>
-<p id="egg-note" class="font-mono text-xs mt-3 hidden" style="color:var(--warn)">Solum themate originali praesto.</p>
+<label class="switch" id="egg-row"><input id="set-egg" type="checkbox"><span class="track"></span><span class="font-display font-semibold">Thema temporis</span></label><p class="text-sm muted mt-4 leading-relaxed">Colores particulaeque ad tempus anni accommodat. Initio aversum.</p><p id="egg-note" class="font-mono text-xs mt-3 hidden" style="color:var(--warn)">Thema temporis</p></div><div class="card chamfer p-7 reveal"><label class="switch"><input id="set-weather" type="checkbox"><span class="track"></span><span class="font-display font-semibold">Ambitus tempestatis</span></label><p class="text-sm muted mt-4 leading-relaxed">Loci permissio requiritur; pluvia nixque in capite animantur. Open-Meteo.</p>
 </div>
 <div class="card chamfer p-7 reveal">
 <label class="switch"><input id="set-motion" type="checkbox"><span class="track"></span><span class="font-display font-semibold">Motus minue</span></label>
@@ -203,7 +201,7 @@
 </div>
 <div class="flex gap-10 font-mono text-xs muted">
 <div class="flex flex-col gap-3"><span class="dim tracking-widest">PAGINAE</span><a href="./" class="hover:opacity-70 transition">Pagina prima</a><a href="./join.html" class="hover:opacity-70 transition">Pete</a><a href="./hall-of-fame.html" class="hover:opacity-70 transition">Hall of Fame</a><a href="./settings.html" class="hover:opacity-70 transition">Optiones</a><a href="./changelog.html" class="hover:opacity-70 transition">Changelog</a><a href="./roadmap.html" class="hover:opacity-70 transition">Roadmap</a><a href="./branding.html" class="hover:opacity-70 transition">Dux notae</a><a href="./bd.html" class="hover:opacity-70 transition">Natalis</a><a href="./impressum.html" class="hover:opacity-70 transition">Notitia legis</a><a href="./datenschutz.html" class="hover:opacity-70 transition">Data privata</a></div>
-<div class="flex flex-col gap-3"><span class="dim tracking-widest">RETE</span><a href="https://discord.lokro.dev" class="hover:opacity-70 transition">Discord</a><a href="https://github.com/Lokrogaming" class="hover:opacity-70 transition">GitHub</a></div>
+<div class="flex flex-col gap-3"><span class="dim tracking-widest">RETE</span><a href="https://github.com/Lokrogaming" class="hover:opacity-70 transition">GitHub</a></div>
 </div>
 </div>
 </div>
@@ -213,7 +211,7 @@
 <a href="./" data-nav="home" class="bottom-nav-item" aria-label="Pagina prima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 10.5L12 4l8 6.5"/><path d="M6 9.5V20h5v-5h2v5h5V9.5"/></svg><span class="bottom-nav-label">Home</span></a>
 <a href="./join.html" class="bottom-nav-item" aria-label="Pete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7"/><path d="M3 12h18"/></svg><span class="bottom-nav-label">Join</span></a>
 <a href="./hall-of-fame.html" class="bottom-nav-item" aria-label="Hall of Fame"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6z"/></svg><span class="bottom-nav-label">Fame</span></a>
-<a href="https://discord.lokro.dev" class="bottom-nav-item" aria-label="Communitas Discord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12c0 4.4-4 8-9 8-1.2 0-2.4-.2-3.4-.6L3 20l1-4.2C3.4 14.4 3 13.2 3 12c0-4.4 4-8 9-8s9 3.6 9 8z"/></svg><span class="bottom-nav-label">Chat</span></a>
+
 </nav>
 
 <script src="/assets/site.js" defer></script>
@@ -335,7 +333,7 @@
   function syncEgg() {
     var st = LT.loadSettings();
     var aura = document.getElementById('cursor-aura');
-    if (st.cursorEgg && st.themeId === 'original') LT.reinitAura();
+    LT.applyWeather(st.weatherEgg);
     else if (aura && aura.parentNode) aura.parentNode.removeChild(aura);
   }
   var editingId = null;
@@ -523,6 +521,7 @@
             var st = LT.loadSettings();
             if (typeof data.settings.reducedMotion === 'boolean') st.reducedMotion = data.settings.reducedMotion;
             if (typeof data.settings.cursorEgg === 'boolean') st.cursorEgg = data.settings.cursorEgg;
+            if (typeof data.settings.weatherEgg === 'boolean') st.weatherEgg = data.settings.weatherEgg;
             LT.saveSettings(st);
             LT.refresh();
             syncToggles();
@@ -579,11 +578,12 @@
   function syncToggles() {
     var st = LT.loadSettings();
     $('set-egg').checked = !!st.cursorEgg;
+    $('set-weather').checked = !!st.weatherEgg;
     $('set-motion').checked = !!st.reducedMotion;
     var customActive = st.themeId !== 'original';
-    $('set-egg').disabled = customActive;
-    $('egg-row').classList.toggle('disabled', customActive);
-    $('egg-note').classList.toggle('hidden', !customActive);
+    $('set-egg').disabled = false;
+    $('egg-row').classList.remove('disabled');
+    $('egg-note').classList.add('hidden');
   }
   function renderAll() {
     renderGallery();
@@ -739,6 +739,7 @@
     LT.refresh();
     syncEgg();
   });
+  $('set-weather').addEventListener('change', function () { var st = LT.loadSettings(); st.weatherEgg = $('set-weather').checked; LT.saveSettings(st); LT.refresh(); LT.applyWeather(st.weatherEgg); });
   $('set-motion').addEventListener('change', function () {
     var st = LT.loadSettings();
     st.reducedMotion = $('set-motion').checked;

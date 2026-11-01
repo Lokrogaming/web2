@@ -7,7 +7,7 @@
   var LANG_KEY = 'lokro-language';
 
   /* ---------- User settings (localStorage) ----------
-     lokro-settings: { cursorEgg: bool (default false), reducedMotion: bool,
+     lokro-settings: { cursorEgg: bool (seasonal theme), weatherEgg: bool, reducedMotion: bool,
                        themeId: string (default 'original') }
      lokro-themes:   array of custom/imported theme objects */
   var SETTINGS_KEY = 'lokro-settings';
@@ -18,17 +18,19 @@
       if (s && typeof s === 'object') {
         return {
           cursorEgg: !!s.cursorEgg,
+          weatherEgg: !!s.weatherEgg,
           reducedMotion: !!s.reducedMotion,
           themeId: (typeof s.themeId === 'string' && s.themeId) || 'original'
         };
       }
     } catch (e) {}
-    return { cursorEgg: false, reducedMotion: false, themeId: 'original' };
+    return { cursorEgg: false, weatherEgg: false, reducedMotion: false, themeId: 'original' };
   }
   function saveSettings(s) {
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify({
         cursorEgg: !!s.cursorEgg,
+        weatherEgg: !!s.weatherEgg,
         reducedMotion: !!s.reducedMotion,
         themeId: String(s.themeId || 'original')
       }));
@@ -162,6 +164,7 @@
   function refreshThemeState() {
     var root = document.documentElement;
     var st = loadSettings();
+    applySeason(st.cursorEgg);
     if (st.reducedMotion) root.setAttribute('data-motion', 'reduced');
     else root.removeAttribute('data-motion');
     var custom = findTheme(st.themeId);
@@ -174,6 +177,40 @@
       if (toggle) { toggle.disabled = false; toggle.removeAttribute('aria-disabled'); }
     }
     initThemeFooter();
+  }
+
+  function applySeason(enabled) {
+    var root = document.documentElement;
+    var month = new Date().getMonth();
+    var season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'autumn' : 'winter';
+    if (enabled) {
+      root.setAttribute('data-season', season);
+      if (!document.querySelector('.seasonal-atmosphere')) {
+        var layer = document.createElement('div'); layer.className = 'seasonal-atmosphere'; layer.setAttribute('aria-hidden', 'true');
+        var glyphs = season === 'spring' ? ['✿','❀'] : season === 'summer' ? ['·','✦'] : season === 'autumn' ? ['🍂','🍁'] : ['❄','✧'];
+        for (var i = 0; i < 20; i++) { var p = document.createElement('span'); p.className = 'seasonal-particle'; p.textContent = glyphs[i % glyphs.length]; p.style.left = (i * 47 % 100) + '%'; p.style.setProperty('--fall-duration', (10 + i % 9) + 's'); p.style.setProperty('--fall-delay', (-i * .8) + 's'); layer.appendChild(p); }
+        document.body.appendChild(layer);
+      }
+    } else { root.removeAttribute('data-season'); var old = document.querySelector('.seasonal-atmosphere'); if (old) old.remove(); }
+  }
+  function applyWeather(enabled) {
+    var root = document.documentElement;
+    var existing = document.querySelector('.weather-atmosphere'); if (existing) existing.remove();
+    root.removeAttribute('data-weather');
+    if (!enabled || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=' + encodeURIComponent(pos.coords.latitude) + '&longitude=' + encodeURIComponent(pos.coords.longitude) + '&current=weather_code&timezone=auto')
+        .then(function (res) { if (!res.ok) throw new Error('Weather unavailable'); return res.json(); })
+        .then(function (data) {
+          var code = data.current && Number(data.current.weather_code);
+          var type = ([71, 73, 75, 77, 85, 86].indexOf(code) >= 0) ? 'snow' : ((code >= 51 && code <= 67) || (code >= 80 && code <= 82) || (code >= 95 && code <= 99) ? 'rain' : '');
+          if (!type) return;
+          root.setAttribute('data-weather', type);
+          var layer = document.createElement('div'); layer.className = 'weather-atmosphere'; layer.setAttribute('aria-hidden', 'true');
+          for (var i = 0; i < 90; i++) { var p = document.createElement('span'); p.className = 'weather-particle'; p.style.left = (i * 37 % 100) + '%'; p.style.setProperty('--fall-duration', (type === 'snow' ? 7 : 1.1) + (i % 7) + 's'); p.style.setProperty('--fall-delay', (-i % 8) + 's'); layer.appendChild(p); }
+          document.body.appendChild(layer);
+        }).catch(function () {});
+    }, function () {}, { timeout: 10000, maximumAge: 1800000 });
   }
 
   /* ---------- Theme ---------- */
@@ -416,7 +453,7 @@
     });
   }
 
-  /* ---------- Cursor aura (desktop only) ----------
+  /* ---------- Legacy cursor aura (kept inert for old markup compatibility) ----------
      Green glow dot following the mouse behind the grid layers, with a
      strong continuous trail that dissolves after ~2.4s. Subtle background
      easter egg. Fades out over interactive elements. */
@@ -543,6 +580,7 @@
     AUTHOR_PLATFORMS: AUTHOR_PLATFORMS,
     loadSettings: loadSettings,
     saveSettings: saveSettings,
+    applyWeather: applyWeather,
     getUserThemes: getUserThemes,
     saveUserThemes: saveUserThemes,
     findTheme: findTheme,
@@ -597,7 +635,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     initTheme(); initReveal(); initCounters(); initFilters();
-    initAccordion(); initModal(); initLang(); initNav(); initOrbs(); initCursorAura(); initHeaderGlow();
+    initAccordion(); initModal(); initLang(); initNav(); initOrbs(); initHeaderGlow();
     initCopyButtons();
   });
 })();
