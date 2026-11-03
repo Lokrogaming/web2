@@ -182,7 +182,7 @@
   function applySeason(enabled) {
     var root = document.documentElement;
     var month = new Date().getMonth();
-    var season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 10 ? 'autumn' : 'winter';
+    var season = month >= 2 && month <= 4 ? 'spring' : month >= 5 && month <= 7 ? 'summer' : month >= 8 && month <= 11 ? 'autumn' : 'winter';
     if (enabled) {
       root.setAttribute('data-season', season);
       if (!document.querySelector('.seasonal-atmosphere')) {
