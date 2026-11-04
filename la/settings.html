@@ -333,8 +333,9 @@
   function syncEgg() {
     var st = LT.loadSettings();
     var aura = document.getElementById('cursor-aura');
-    LT.applyWeather(st.weatherEgg);
+    if (st.cursorEgg && st.themeId === 'original' && !st.reducedMotion) LT.reinitAura();
     else if (aura && aura.parentNode) aura.parentNode.removeChild(aura);
+    LT.applyWeather(st.weatherEgg);
   }
   var editingId = null;
   function editorColors() {

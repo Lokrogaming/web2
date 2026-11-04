@@ -637,5 +637,7 @@
     initTheme(); initReveal(); initCounters(); initFilters();
     initAccordion(); initModal(); initLang(); initNav(); initOrbs(); initHeaderGlow();
     initCopyButtons();
+    initCursorAura();
+    applyWeather(loadSettings().weatherEgg);
   });
 })();
