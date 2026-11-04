@@ -42,6 +42,7 @@ html.light {
 * { scroll-behavior: smooth; }
 html, body { overflow-x: clip; }
 body {
+  isolation: isolate;
   background: var(--bg);
   color: var(--fg);
   font-family: 'Inter', system-ui, sans-serif;
@@ -238,11 +239,16 @@ select.select-field { appearance: none; -webkit-appearance: none; }
 }
 
 /* Seasonal and optional local weather atmosphere. */
+<<<<<<< Updated upstream
 .seasonal-atmosphere, .weather-atmosphere { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
 .seasonal-atmosphere { opacity: .72; z-index: 0; }
 body > section { position: relative; z-index: 1; }
+=======
+.seasonal-atmosphere, .weather-atmosphere { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.seasonal-atmosphere { opacity: .72; }
+>>>>>>> Stashed changes
 .seasonal-particle, .weather-particle { position: absolute; top: -12vh; color: var(--season-color, #b9ddc3); text-shadow: 0 0 12px currentColor; animation: atmosphere-fall var(--fall-duration, 12s) linear infinite; animation-delay: var(--fall-delay, 0s); }
-.weather-atmosphere { z-index: 49; }
+.weather-atmosphere { opacity: .62; }
 .weather-particle { color: rgba(150,195,255,.7); width: 1px; height: 24px; background: linear-gradient(transparent, currentColor); transform: rotate(12deg); }
 html[data-season="spring"] { --season-color: #e5b5d1; --season-glow: rgba(229,181,209,.12); }
 html[data-season="summer"] { --season-color: #f5d48a; --season-glow: rgba(245,212,138,.12); }
@@ -311,6 +317,7 @@ body > section:first-of-type > .relative { position: relative; }
 body > section:first-of-type h1 { max-width: 16ch; margin-inline: auto; }
 body > section:first-of-type p { max-width: 62ch; }
 section { scroll-margin-top: 5rem; }
+body > section, body > main, body > footer { position: relative; z-index: 1; }
 .card, .honor-card, .accordion-item, .modal-box, .notice-box {
   border-radius: 1.35rem;
   border-color: var(--border);
@@ -343,62 +350,102 @@ footer a:hover { color: var(--accent); }
 .avatar-ring { border-radius: 50%; }
 img { border-radius: .5rem; }
 img.logo, header img, .avatar-ring img { border-radius: 0; }
+/* Seasonal palettes are deliberately strong enough to tint custom theme values too. */
+html[data-season="spring"] { --bg: #09120f !important; --bg-elev: #111d17 !important; --bg-elev-2: #1a2a20 !important; --fg: #f0f7f1 !important; --fg-muted: #a8b9ac !important; --accent: #a9e4bd !important; --accent-dim: rgba(112, 196, 137, .17) !important; --border: rgba(174, 225, 185, .12) !important; --grid-line: rgba(165, 228, 179, .12) !important; }
+html[data-season="summer"] { --bg: #111008 !important; --bg-elev: #1c1910 !important; --bg-elev-2: #2a2415 !important; --fg: #fff8e9 !important; --fg-muted: #c6b99d !important; --accent: #f3cf78 !important; --accent-dim: rgba(223, 174, 73, .16) !important; --border: rgba(245, 216, 147, .13) !important; --grid-line: rgba(248, 213, 127, .12) !important; }
+html[data-season="autumn"] { --bg: #140d09 !important; --bg-elev: #20150f !important; --bg-elev-2: #302016 !important; --fg: #fff3e8 !important; --fg-muted: #c7a995 !important; --accent: #e9a16f !important; --accent-dim: rgba(213, 116, 59, .18) !important; --border: rgba(230, 171, 127, .14) !important; --grid-line: rgba(235, 157, 103, .12) !important; }
+html[data-season="winter"] { --bg: #091018 !important; --bg-elev: #111b26 !important; --bg-elev-2: #1a2938 !important; --fg: #f0f6fc !important; --fg-muted: #a5b6c7 !important; --accent: #afd7f3 !important; --accent-dim: rgba(104, 166, 211, .17) !important; --border: rgba(170, 209, 238, .13) !important; --grid-line: rgba(162, 206, 240, .12) !important; }
+html.light[data-season="spring"] { --bg: #f0f6ef !important; --bg-elev: #f9fcf7 !important; --bg-elev-2: #e5f0e3 !important; --fg: #18251b !important; --fg-muted: #536957 !important; --accent: #338956 !important; --accent-dim: rgba(69, 159, 91, .13) !important; --border: rgba(46, 105, 59, .12) !important; --grid-line: rgba(54, 125, 69, .12) !important; }
+html.light[data-season="summer"] { --bg: #fbf6e9 !important; --bg-elev: #fffdf5 !important; --bg-elev-2: #f3ead1 !important; --fg: #2c2516 !important; --fg-muted: #6b5e40 !important; --accent: #b07a18 !important; --accent-dim: rgba(184, 136, 39, .13) !important; --border: rgba(132, 99, 35, .13) !important; --grid-line: rgba(151, 116, 42, .12) !important; }
+html.light[data-season="autumn"] { --bg: #faf0e8 !important; --bg-elev: #fffaf5 !important; --bg-elev-2: #f1dfd0 !important; --fg: #302017 !important; --fg-muted: #705744 !important; --accent: #b55e2f !important; --accent-dim: rgba(181, 94, 47, .13) !important; --border: rgba(140, 80, 43, .13) !important; --grid-line: rgba(165, 88, 46, .12) !important; }
+html.light[data-season="winter"] { --bg: #eff4f8 !important; --bg-elev: #f9fcff !important; --bg-elev-2: #e1ebf3 !important; --fg: #182431 !important; --fg-muted: #536a7c !important; --accent: #387da8 !important; --accent-dim: rgba(65, 130, 174, .13) !important; --border: rgba(54, 105, 143, .13) !important; --grid-line: rgba(61, 117, 158, .12) !important; }
+.seasonal-particle.is-leaf { animation-name: leaf-glide; animation-timing-function: ease-in-out; filter: drop-shadow(0 2px 4px rgba(35, 16, 5, .26)); }
+@keyframes leaf-glide {
+  0% { transform: translate3d(0, -12vh, 0) rotate(0deg); }
+  18% { transform: translate3d(var(--leaf-sway), 9vh, 0) rotate(55deg); }
+  39% { transform: translate3d(calc(var(--leaf-sway) * -.65), 34vh, 0) rotate(115deg); }
+  61% { transform: translate3d(calc(var(--leaf-sway) * 1.15), 61vh, 0) rotate(195deg); }
+  82% { transform: translate3d(calc(var(--leaf-sway) * -.4), 88vh, 0) rotate(260deg); }
+  100% { transform: translate3d(var(--leaf-sway), 118vh, 0) rotate(330deg); }
+}
 @media (min-width: 768px) {
   body { padding-bottom: 2rem; }
   body > section:first-of-type { min-height: 28rem; }
   .bottom-nav { bottom: 1.4rem; }
 }
 @media (max-width: 640px) {
-  body { padding-bottom: 6rem; }
+  body { padding-bottom: 1.25rem; }
   body > section:first-of-type { padding-top: 7.5rem; }
   body > section:first-of-type h1 { font-size: clamp(2.5rem, 12vw, 4rem); line-height: 1.02; }
   .bottom-nav { bottom: .7rem; max-width: calc(100vw - 1.25rem); }
   .bottom-nav-item { min-width: 3.65rem; padding-inline: .65rem; }
 }
 
-/* Cursor aura — desktop only, created by site.js as first body child.
-   Sits behind later grid layers (z-index 0, early DOM order), never intercepts input. */
-#cursor-aura {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  opacity: 1;
-  transition: opacity .35s ease;
+/* Compact glass drawer navigation for phones and small tablets. */
+.mobile-nav-toggle, .mobile-nav-backdrop, .mobile-nav-drawer { display: none; }
+.mobile-nav-toggle:focus-visible, .mobile-nav-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.mobile-nav-toggle {
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 62;
+  width: 58px; height: 58px; padding: 0; border: 1px solid var(--border-strong);
+  border-radius: 20px; color: var(--fg); cursor: pointer;
+  background: color-mix(in srgb, var(--bg-elev) 70%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(165%); backdrop-filter: blur(22px) saturate(165%);
+  box-shadow: 0 14px 38px -16px rgba(0,0,0,.72), inset 0 1px 0 rgba(255,255,255,.10);
+  transition: transform .22s ease, border-color .22s ease, background-color .22s ease;
 }
-#cursor-aura.is-dim { opacity: 0; }
-.cursor-dot {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 14px;
-  height: 14px;
-  margin: -7px 0 0 -7px;
+.mobile-nav-toggle:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 52%, var(--border-strong)); }
+.mobile-nav-toggle span, .mobile-nav-toggle span::before, .mobile-nav-toggle span::after {
+  position: absolute; left: 50%; top: 50%; width: 21px; height: 2px; border-radius: 2px;
+  background: currentColor; transform: translate(-50%, -50%); transition: transform .22s ease, opacity .18s ease;
+}
+.mobile-nav-toggle span::before, .mobile-nav-toggle span::after { content: ""; left: 0; top: 0; transform: translateY(-7px); }
+.mobile-nav-toggle span::after { transform: translateY(7px); }
+.mobile-nav-toggle[aria-expanded="true"] span { background: transparent; }
+.mobile-nav-toggle[aria-expanded="true"] span::before { transform: rotate(45deg); }
+.mobile-nav-toggle[aria-expanded="true"] span::after { transform: rotate(-45deg); }
+.mobile-nav-backdrop {
+  position: fixed; inset: 0; z-index: 60; width: 100%; height: 100%; padding: 0; border: 0;
+  background: rgba(3, 8, 6, .36); opacity: 0; pointer-events: none; transition: opacity .2s ease;
+}
+.mobile-nav-drawer {
+  position: fixed; right: 1rem; bottom: calc(1rem + 58px + .75rem); z-index: 61;
+  width: min(270px, calc(100vw - 2rem)); padding: .6rem; flex-direction: column; gap: .3rem;
+  border: 1px solid var(--border-strong); border-radius: 1.4rem;
+  background: color-mix(in srgb, var(--bg-elev) 76%, transparent);
+  -webkit-backdrop-filter: blur(26px) saturate(170%); backdrop-filter: blur(26px) saturate(170%);
+  box-shadow: 0 24px 70px -24px rgba(0,0,0,.78), inset 0 1px 0 rgba(255,255,255,.09);
+  opacity: 0; pointer-events: none; transform: translateY(10px) scale(.98); transform-origin: bottom right;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.mobile-nav-item { display: flex; align-items: center; gap: .9rem; width: 100%; min-height: 48px; padding: .7rem .85rem; border-radius: .95rem; color: var(--fg-muted); text-decoration: none; transition: color .16s ease, background-color .16s ease; }
+.mobile-nav-item svg { width: 20px; height: 20px; flex: 0 0 20px; }
+.mobile-nav-item .bottom-nav-label { font: 500 .84rem/1.2 'Inter', system-ui, sans-serif; letter-spacing: 0; }
+.mobile-nav-item:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 7%, transparent); }
+.mobile-nav-item.active { color: var(--bg); background: var(--accent); }
+.mobile-nav-item.active .bottom-nav-label { color: var(--bg); }
+@media (max-width: 767px) {
+  body { padding-bottom: 1.25rem; }
+  .bottom-nav { display: none !important; }
+  .mobile-nav-toggle { display: block; }
+  .mobile-nav-backdrop.is-open { display: block; opacity: 1; pointer-events: auto; }
+  .mobile-nav-drawer.is-open { display: flex; opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-toggle, .mobile-nav-backdrop, .mobile-nav-drawer, .mobile-nav-item { transition: none !important; }
+}
+
+/* Theme-aware, slim scrollbars (Firefox and WebKit/Blink). */
+* { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 62%, var(--fg-dim)) var(--bg); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  min-height: 36px;
+  border: 2px solid var(--bg);
   border-radius: 999px;
-  background: var(--cursor-accent);
-  box-shadow:
-    0 0 12px 2px var(--cursor-accent),
-    0 0 42px 10px var(--accent-dim),
-    0 0 90px 30px var(--accent-dim);
-  will-change: transform;
+  background: color-mix(in srgb, var(--accent) 52%, var(--fg-dim));
 }
-.cursor-trail {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 22px;
-  height: 22px;
-  margin: -11px 0 0 -11px;
-  border-radius: 999px;
-  background: radial-gradient(circle, var(--cursor-accent) 0%, transparent 60%);
-  filter: blur(5px);
-  opacity: 0;
-  will-change: transform, opacity;
-}
-@media (hover: none), (pointer: coarse) {
-  #cursor-aura { display: none; }
-}
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar-corner { background: var(--bg); }
 
 /* Header sunrise glow — clipped cap rising from below into the hero grid.
    Only the top of the circle shows; the rest is cut by the wrapper.
@@ -438,16 +485,11 @@ html.light .header-glow { opacity: .4; }
 .plat-option svg { width: 18px; height: 18px; flex-shrink: 0; }
 .plat-option:hover, .plat-option.hl { background: var(--bg-elev-2); color: var(--fg); }
 .plat-option[aria-selected="true"] { color: var(--fg); font-weight: 600; }
-@media (prefers-reduced-motion: reduce) {
-  #cursor-aura { display: none; }
-}
-
 /* User setting: reduced motion (localStorage lokro-settings).
    Mirrors the OS-level block above, but controlled per user. */
 html[data-motion="reduced"] *, html[data-motion="reduced"] *::before, html[data-motion="reduced"] *::after { animation: none !important; transition: none !important; }
 html[data-motion="reduced"] { scroll-behavior: auto; }
 html[data-motion="reduced"] .reveal { opacity: 1; transform: none; filter: none; }
-html[data-motion="reduced"] #cursor-aura { display: none; }
 
 /* Custom theme: extra header shadow (theme flag "headerShadow") */
 html[data-hshadow="1"] header { box-shadow: 0 12px 34px -14px var(--accent-dim), 0 2px 0 0 var(--accent-dim); }

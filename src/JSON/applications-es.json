@@ -74,36 +74,6 @@
     ]
   },
   {
-    "id": "moderator",
-    "title": "Moderador de Comunidad",
-    "team": "LokroGang",
-    "status": "open",
-    "summary": "Ayudas a mantener LokroGang amable, segura y activa.",
-    "requirements": [
-      "Experiencia como moderador valorada",
-      "Tono amable y tranquilo",
-      "Actividad regular en Discord"
-    ],
-    "questions": [
-      {
-        "id": "mod_erfahrung",
-        "label": "¿Ya tienes experiencia como moderador?",
-        "type": "select",
-        "options": [
-          "Sí",
-          "No"
-        ],
-        "required": true
-      },
-      {
-        "id": "motivation",
-        "label": "¿Por qué quieres unirte a LOKRO?",
-        "type": "textarea",
-        "required": true
-      }
-    ]
-  },
-  {
     "id": "design-helfer",
     "title": "Ayudante de UI / Diseño",
     "team": "Design",

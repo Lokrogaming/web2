@@ -7,7 +7,7 @@
   var LANG_KEY = 'lokro-language';
 
   /* ---------- User settings (localStorage) ----------
-     lokro-settings: { cursorEgg: bool (seasonal theme), weatherEgg: bool, reducedMotion: bool,
+     lokro-settings: { seasonalTheme: bool (default true), weatherEgg: bool, reducedMotion: bool,
                        themeId: string (default 'original') }
      lokro-themes:   array of custom/imported theme objects */
   var SETTINGS_KEY = 'lokro-settings';
@@ -17,19 +17,19 @@
       var s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
       if (s && typeof s === 'object') {
         return {
-          cursorEgg: !!s.cursorEgg,
+          seasonalTheme: typeof s.seasonalTheme === 'boolean' ? s.seasonalTheme : true,
           weatherEgg: !!s.weatherEgg,
           reducedMotion: !!s.reducedMotion,
           themeId: (typeof s.themeId === 'string' && s.themeId) || 'original'
         };
       }
     } catch (e) {}
-    return { cursorEgg: false, weatherEgg: false, reducedMotion: false, themeId: 'original' };
+    return { seasonalTheme: true, weatherEgg: false, reducedMotion: false, themeId: 'original' };
   }
   function saveSettings(s) {
     try {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify({
-        cursorEgg: !!s.cursorEgg,
+        seasonalTheme: s.seasonalTheme !== false,
         weatherEgg: !!s.weatherEgg,
         reducedMotion: !!s.reducedMotion,
         themeId: String(s.themeId || 'original')
@@ -164,7 +164,7 @@
   function refreshThemeState() {
     var root = document.documentElement;
     var st = loadSettings();
-    applySeason(st.cursorEgg);
+    applySeason(st.seasonalTheme);
     if (st.reducedMotion) root.setAttribute('data-motion', 'reduced');
     else root.removeAttribute('data-motion');
     var custom = findTheme(st.themeId);
@@ -188,7 +188,7 @@
       if (!document.querySelector('.seasonal-atmosphere')) {
         var layer = document.createElement('div'); layer.className = 'seasonal-atmosphere'; layer.setAttribute('aria-hidden', 'true');
         var glyphs = season === 'spring' ? ['✿','❀'] : season === 'summer' ? ['·','✦'] : season === 'autumn' ? ['🍂','🍁'] : ['❄','✧'];
-        for (var i = 0; i < 20; i++) { var p = document.createElement('span'); p.className = 'seasonal-particle'; p.textContent = glyphs[i % glyphs.length]; p.style.left = (i * 47 % 100) + '%'; p.style.setProperty('--fall-duration', (10 + i % 9) + 's'); p.style.setProperty('--fall-delay', (-i * .8) + 's'); layer.appendChild(p); }
+        for (var i = 0; i < 24; i++) { var p = document.createElement('span'); p.className = 'seasonal-particle' + (season === 'autumn' ? ' is-leaf' : ''); p.textContent = glyphs[i % glyphs.length]; p.style.left = (i * 47 % 100) + '%'; p.style.setProperty('--fall-duration', (season === 'autumn' ? 13 + i % 12 : 10 + i % 9) + 's'); p.style.setProperty('--fall-delay', (-i * .8) + 's'); p.style.setProperty('--leaf-sway', (i % 2 ? '-' : '') + (22 + (i * 13 % 45)) + 'px'); p.style.fontSize = (16 + i % 11) + 'px'; layer.appendChild(p); }
         document.body.appendChild(layer);
       }
     } else { root.removeAttribute('data-season'); var old = document.querySelector('.seasonal-atmosphere'); if (old) old.remove(); }
@@ -441,7 +441,6 @@
   function initNav() {
     var path = window.location.pathname;
     var items = document.querySelectorAll('.bottom-nav-item');
-    if (!items.length) return;
     items.forEach(function (a) {
       var href = a.getAttribute('href') || '';
       var label = (a.getAttribute('aria-label') || '').toLowerCase();
@@ -451,80 +450,58 @@
       else if ((path === '/' || /^\/(de|en|fr|it|es|tr|la)\/?$/.test(path) || path.indexOf('index') !== -1) && label.indexOf('start') !== -1) a.classList.add('active');
       else if ((path === '/' || /^\/(de|en|fr|it|es|tr|la)\/?$/.test(path)) && a.getAttribute('data-nav') === 'home') a.classList.add('active');
     });
+    initMobileNav();
   }
 
-  /* ---------- Legacy cursor aura (kept inert for old markup compatibility) ----------
-     Green glow dot following the mouse behind the grid layers, with a
-     strong continuous trail that dissolves after ~2.4s. Subtle background
-     easter egg. Fades out over interactive elements. */
-  function initCursorAura() {
-    if (document.getElementById('cursor-aura')) return;
-    if (motionReduced()) return;
-    // Easter egg: off by default, user toggle (lokro-settings), original theme only.
-    var _st = loadSettings();
-    if (!_st.cursorEgg) return;
-    if (_st.themeId !== 'original') return;
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    var aura = document.createElement('div');
-    aura.id = 'cursor-aura';
-    aura.setAttribute('aria-hidden', 'true');
-    var dot = document.createElement('div');
-    dot.className = 'cursor-dot';
-    aura.appendChild(dot);
-    document.body.insertBefore(aura, document.body.firstChild);
-    var x = -100, y = -100, tx = -100, ty = -100, raf = null;
-    var TRAIL_LIFE = 2400, TRAIL_MAX = 48;
-    function loop() {
-      if (!aura.isConnected) { raf = null; return; }
-      var now = performance.now();
-      x += (tx - x) * 0.22;
-      y += (ty - y) * 0.22;
-      dot.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-      var trails = aura.querySelectorAll('.cursor-trail');
-      trails.forEach(function (el) {
-        var age = now - parseFloat(el.getAttribute('data-born'));
-        var p = age / TRAIL_LIFE;
-        if (p >= 1) { el.remove(); return; }
-        el.style.opacity = String(0.65 * (1 - p));
-        var s = 1 + p * 3.6;
-        el.style.transform = 'translate(' + el.getAttribute('data-x') + 'px,' + el.getAttribute('data-y') + 'px) scale(' + s + ')';
-      });
-      if (Math.abs(tx - x) > 0.1 || Math.abs(ty - y) > 0.1 || aura.querySelectorAll('.cursor-trail').length) {
-        raf = requestAnimationFrame(loop);
-      } else { raf = null; }
+  function initMobileNav() {
+    var original = document.querySelector('.bottom-nav');
+    if (!original || !original.querySelector('.bottom-nav-item') || document.getElementById('mobile-nav-toggle')) return;
+    var lang = document.documentElement.lang || 'en';
+    var labels = {
+      de: ['Navigation öffnen', 'Navigation schließen', 'Mobile Navigation'],
+      en: ['Open navigation', 'Close navigation', 'Mobile navigation'],
+      fr: ['Ouvrir la navigation', 'Fermer la navigation', 'Navigation mobile'],
+      it: ['Apri la navigazione', 'Chiudi la navigazione', 'Navigazione mobile'],
+      es: ['Abrir navegación', 'Cerrar navegación', 'Navegación móvil'],
+      tr: ['Menüyü aç', 'Menüyü kapat', 'Mobil gezinme'],
+      la: ['Navigationem aperi', 'Navigationem claude', 'Navigatio mobilis']
+    }[lang] || ['Open navigation', 'Close navigation', 'Mobile navigation'];
+    var toggle = document.createElement('button');
+    toggle.type = 'button'; toggle.id = 'mobile-nav-toggle'; toggle.className = 'mobile-nav-toggle';
+    toggle.setAttribute('aria-label', labels[0]); toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-controls', 'mobile-nav-drawer');
+    toggle.innerHTML = '<span aria-hidden="true"></span>';
+    var backdrop = document.createElement('button');
+    backdrop.type = 'button'; backdrop.className = 'mobile-nav-backdrop'; backdrop.setAttribute('aria-label', labels[1]); backdrop.setAttribute('tabindex', '-1'); backdrop.hidden = true;
+    var drawer = document.createElement('nav');
+    drawer.id = 'mobile-nav-drawer'; drawer.className = 'mobile-nav-drawer'; drawer.setAttribute('aria-label', labels[2]); drawer.setAttribute('aria-hidden', 'true'); drawer.inert = true;
+    original.querySelectorAll('.bottom-nav-item').forEach(function (item) {
+      var link = item.cloneNode(true);
+      link.classList.remove('bottom-nav-item'); link.classList.add('mobile-nav-item');
+      drawer.appendChild(link);
+    });
+    document.body.appendChild(backdrop); document.body.appendChild(drawer); document.body.appendChild(toggle);
+    var closeTimer = null;
+    function close(restoreFocus) {
+      toggle.setAttribute('aria-expanded', 'false'); toggle.setAttribute('aria-label', labels[0]);
+      drawer.setAttribute('aria-hidden', 'true'); drawer.inert = true;
+      drawer.classList.remove('is-open'); backdrop.classList.remove('is-open');
+      if (closeTimer) window.clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(function () { drawer.hidden = true; backdrop.hidden = true; }, 220);
+      if (restoreFocus) toggle.focus();
     }
-    function kick() { if (!raf) raf = requestAnimationFrame(loop); }
-    document.addEventListener('mousemove', function (e) {
-      if (!document.body.contains(aura)) return;
-      tx = e.clientX; ty = e.clientY;
-      kick();
-      if (aura.classList.contains('is-dim')) return;
-      if (aura.querySelectorAll('.cursor-trail').length < TRAIL_MAX) {
-        var now = performance.now();
-        var s = document.createElement('div');
-        s.className = 'cursor-trail';
-        s.setAttribute('data-born', String(now));
-        s.setAttribute('data-x', String(tx));
-        s.setAttribute('data-y', String(ty));
-        s.style.opacity = '0.65';
-        aura.appendChild(s);
-      }
+    function open() {
+      if (closeTimer) window.clearTimeout(closeTimer);
+      drawer.hidden = false; backdrop.hidden = false; drawer.inert = false;
+      toggle.setAttribute('aria-expanded', 'true'); toggle.setAttribute('aria-label', labels[1]);
+      drawer.setAttribute('aria-hidden', 'false');
+      window.requestAnimationFrame(function () { drawer.classList.add('is-open'); backdrop.classList.add('is-open'); });
+    }
+    toggle.addEventListener('click', function () {
+      if (toggle.getAttribute('aria-expanded') === 'true') close(false); else open();
     });
-    document.documentElement.addEventListener('mouseleave', function () {
-      aura.classList.add('is-dim');
-    });
-    document.documentElement.addEventListener('mouseenter', function () {
-      aura.classList.remove('is-dim');
-    });
-    var SEL = 'a, button, input, select, textarea, label, .card, .honor-card, .accordion-btn, .filter-btn, .lang-option, .bottom-nav-item';
-    document.addEventListener('mouseover', function (e) {
-      if (e.target.closest && e.target.closest(SEL)) aura.classList.add('is-dim');
-    });
-    document.addEventListener('mouseout', function (e) {
-      var to = e.relatedTarget;
-      if (to && to.closest && to.closest(SEL)) return;
-      aura.classList.remove('is-dim');
-    });
+    backdrop.addEventListener('click', function () { close(true); });
+    drawer.addEventListener('click', function (e) { if (e.target.closest('a')) close(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') close(true); });
   }
 
   /* ---------- Header sunrise glow ----------
@@ -587,8 +564,7 @@
     sanitizeUsername: sanitizeUsername,
     buildAuthorUrl: buildAuthorUrl,
     escapeHtml: escapeHtml,
-    refresh: refreshThemeState,
-    reinitAura: function () { try { initCursorAura(); } catch (e) {} }
+    refresh: refreshThemeState
   };
 
   function initCopyButtons() {

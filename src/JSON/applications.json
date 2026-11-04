@@ -74,36 +74,6 @@
     ]
   },
   {
-    "id": "moderator",
-    "title": "Community Moderator",
-    "team": "LokroGang",
-    "status": "open",
-    "summary": "Du hilfst dabei, die LokroGang freundlich, sicher und aktiv zu halten.",
-    "requirements": [
-      "Erfahrung als Moderator von Vorteil",
-      "Freundlicher, ruhiger Umgangston",
-      "Regelmäßige Aktivität im Discord"
-    ],
-    "questions": [
-      {
-        "id": "mod_erfahrung",
-        "label": "Hast du bereits Erfahrung als Moderator?",
-        "type": "select",
-        "options": [
-          "Ja",
-          "Nein"
-        ],
-        "required": true
-      },
-      {
-        "id": "motivation",
-        "label": "Warum möchtest du bei LOKRO mitmachen?",
-        "type": "textarea",
-        "required": true
-      }
-    ]
-  },
-  {
     "id": "design-helfer",
     "title": "UI / Grafik Helfer",
     "team": "Design",

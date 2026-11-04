@@ -74,36 +74,6 @@
     ]
   },
   {
-    "id": "moderator",
-    "title": "Moderator Communitatis",
-    "team": "LokroGang",
-    "status": "open",
-    "summary": "Adiuvas ut LokroGang amica, tuta et activa maneat.",
-    "requirements": [
-      "Experientia moderatoris grata",
-      "Modus amicus et tranquillus",
-      "Actio constans in Discord"
-    ],
-    "questions": [
-      {
-        "id": "mod_erfahrung",
-        "label": "Habesne iam experientiam moderatoris?",
-        "type": "select",
-        "options": [
-          "Ita",
-          "Non"
-        ],
-        "required": true
-      },
-      {
-        "id": "motivation",
-        "label": "Cur ad LOKRO accedere vis?",
-        "type": "textarea",
-        "required": true
-      }
-    ]
-  },
-  {
     "id": "design-helfer",
     "title": "Adiutor UI / Graphica",
     "team": "Design",

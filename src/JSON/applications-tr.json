@@ -74,36 +74,6 @@
     ]
   },
   {
-    "id": "moderator",
-    "title": "Topluluk Moderatörü",
-    "team": "LokroGang",
-    "status": "open",
-    "summary": "LokroGang’in dostça, güvenli ve aktif kalmasına yardımcı olursun.",
-    "requirements": [
-      "Moderatör deneyimi avantajdır",
-      "Nazik, sakin üslup",
-      "Discord’da düzenli aktiflik"
-    ],
-    "questions": [
-      {
-        "id": "mod_erfahrung",
-        "label": "Daha önce moderatörlük deneyimin oldu mu?",
-        "type": "select",
-        "options": [
-          "Evet",
-          "Hayır"
-        ],
-        "required": true
-      },
-      {
-        "id": "motivation",
-        "label": "Neden LOKRO’ya katılmak istiyorsun?",
-        "type": "textarea",
-        "required": true
-      }
-    ]
-  },
-  {
     "id": "design-helfer",
     "title": "UI / Grafik Yardımcısı",
     "team": "Design",
